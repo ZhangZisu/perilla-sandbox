@@ -1,4 +1,4 @@
-export interface IsolateRawRunConfig {
+export interface IsolateRawRunOptions {
     meta?: string;
     mem?: number;
     time?: number;
@@ -30,14 +30,10 @@ export interface IsolateRunConfig {
     time: number;
     boxID: number;
     processes: number;
-    shareNet: number;
-}
-
-export interface IPerillaSandboxConfig {
-    isolatePath: string;
-    boxID: number;
-    wallDelta: number;
-    wallMultiplier: number;
-    extraDelta: number;
-    extraMultiplier: number;
+    shareNet: boolean;
+    working: string;
+    executable: string;
+    arguments?: string[];
+    stdin?: string;
+    stdout?: string;
 }
