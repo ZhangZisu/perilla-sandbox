@@ -28,12 +28,10 @@ class PerillaSandbox {
             }
             const options = {
                 meta: this.metaPath,
-                mem: config.memory,
                 time: config.time,
                 wallTime: config.time * this.wallMultiplier + this.wallDelta,
                 extraTime: config.time * this.extraMultiplier + this.extraDelta,
                 boxId: this.boxID,
-                stack: config.memory,
                 stderrToStdout: true,
                 processes: config.processes,
                 shareNet: config.shareNet,
