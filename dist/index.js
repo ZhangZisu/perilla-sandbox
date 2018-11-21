@@ -105,7 +105,7 @@ class PerillaSandbox {
                 status = interface_1.RunStatus.Succeeded;
             }
             else if (parsed.cgOomKilled) {
-                status = interface_1.RunStatus.MemortLimitExceeded;
+                status = interface_1.RunStatus.MemoryLimitExceeded;
             }
             else if (parsed.killed) {
                 status = interface_1.RunStatus.TimeLimitExceeded;

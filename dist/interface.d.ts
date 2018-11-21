@@ -44,7 +44,7 @@ export declare enum RunStatus {
     Succeeded = 0,
     Failed = 1,
     TimeLimitExceeded = 2,
-    MemortLimitExceeded = 3,
+    MemoryLimitExceeded = 3,
     RuntimeError = 4
 }
 export interface IRunResult {
