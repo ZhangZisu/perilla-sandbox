@@ -14,7 +14,7 @@ exports.convertJsNameToIsolate = (name) => {
     return ret;
 };
 exports.convertIsolateNameToJs = (name) => {
-    let splitted = name.split('-');
+    const splitted = name.split("-");
     let ret = splitted[0];
     for (let i = 1; i < splitted.length; i++) {
         ret += splitted[i][0].toUpperCase() + splitted[i].substr(1);
@@ -27,8 +27,9 @@ exports.parseMetaFile = (path) => {
     const result = {};
     for (const kv of tags) {
         const key = exports.convertIsolateNameToJs(kv[0]);
-        if (key && key.length)
+        if (key && key.length) {
             result[key] = kv[1];
+        }
     }
     return result;
 };

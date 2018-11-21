@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = require("child_process");
 const fs_extra_1 = require("fs-extra");
 const path_1 = require("path");
+const tmp_1 = require("tmp");
 const interface_1 = require("./interface");
 const utils_1 = require("./utils");
 class PerillaSandbox {
@@ -18,9 +19,9 @@ class PerillaSandbox {
     run(config) {
         try {
             this.init();
-            for (let file of config.inputFiles) {
+            for (const file of config.inputFiles) {
                 try {
-                    fs_extra_1.copySync(file.src, path_1.join(this.isolatePath, 'box', file.dst));
+                    fs_extra_1.copySync(file.src, path_1.join(this.isolatePath, "box", file.dst));
                 }
                 catch (e) {
                 }
@@ -52,7 +53,7 @@ class PerillaSandbox {
                 }
             }
             for (const env of this.env) {
-                args.push('--env=' + env);
+                args.push("--env=" + env);
             }
             args.push("--dir=/etc=/etc");
             args.push("--run");
@@ -63,8 +64,8 @@ class PerillaSandbox {
                     args.push(arg);
                 }
             }
-            let stdin = 'ignore';
-            let stdout = 'ignore';
+            let stdin = "ignore";
+            let stdout = "ignore";
             if (config.stdin) {
                 stdin = fs_extra_1.openSync(config.stdin, "r");
             }
@@ -72,25 +73,27 @@ class PerillaSandbox {
                 stdout = fs_extra_1.openSync(config.stdout, "w");
             }
             const spawnConfig = {
-                stdio: [stdin, stdout, 'ignore'],
+                stdio: [stdin, stdout, "ignore"],
             };
             if (process.platform === "win32") {
                 spawnConfig.shell = "C:\\Windows\\System32\\bash.exe";
             }
             const result = child_process_1.spawnSync(this.isolateExecutable, args, spawnConfig);
-            if (typeof stdin === "number")
+            if (typeof stdin === "number") {
                 fs_extra_1.closeSync(stdin);
-            if (typeof stdin === "number")
+            }
+            if (typeof stdin === "number") {
                 fs_extra_1.closeSync(stdout);
+            }
             if (result.error) {
                 throw result.error;
             }
             if (result.status >= 2) {
                 throw new Error("Isolate exited with code " + result.status);
             }
-            for (let file of config.outputFiles) {
+            for (const file of config.outputFiles) {
                 try {
-                    fs_extra_1.copySync(path_1.join(this.isolatePath, 'box', file.src), file.dst);
+                    fs_extra_1.copySync(path_1.join(this.isolatePath, "box", file.src), file.dst);
                 }
                 catch (e) {
                 }
@@ -98,7 +101,7 @@ class PerillaSandbox {
             const parsed = utils_1.parseMetaFile(this.metaPath);
             this.cleanup();
             let status = interface_1.RunStatus.RuntimeError;
-            if (parsed.exitcode === '0') {
+            if (parsed.exitcode === "0") {
                 status = interface_1.RunStatus.Succeeded;
             }
             else if (parsed.cgOomKilled) {
@@ -110,8 +113,8 @@ class PerillaSandbox {
             return {
                 status,
                 time: parseFloat(parsed.time),
-                memory: parseInt(parsed.cgMem),
-                message: parsed.message
+                memory: parseInt(parsed.cgMem, 10),
+                message: parsed.message,
             };
         }
         catch (e) {
@@ -120,7 +123,7 @@ class PerillaSandbox {
                 status: interface_1.RunStatus.Failed,
                 time: 0,
                 memory: 0,
-                message: e.message
+                message: e.message,
             };
         }
     }
@@ -134,10 +137,12 @@ class PerillaSandbox {
         }
         child_process_1.spawnSync(this.isolateExecutable, args, config);
         try {
-            if (this.metaPath)
+            if (this.metaPath) {
                 fs_extra_1.unlinkSync(this.metaPath);
-            if (this.tmpDir)
-                fs_extra_1.removeSync(this.tmpDir);
+            }
+            if (this.tmp) {
+                this.tmp.removeCallback();
+            }
         }
         catch (e) {
         }
@@ -157,9 +162,9 @@ class PerillaSandbox {
         if (result.status >= 2) {
             throw new Error("Isolate exited with code " + result.status);
         }
-        fs_extra_1.ensureDirSync(this.tmpDir = path_1.join(__dirname, "..", "tmp", "" + this.boxID));
+        this.tmp = tmp_1.dirSync();
         this.isolatePath = result.stdout.toString().trim();
-        this.metaPath = path_1.join(this.tmpDir, "meta");
+        this.metaPath = path_1.join(this.tmp.name, "meta");
     }
 }
 exports.PerillaSandbox = PerillaSandbox;

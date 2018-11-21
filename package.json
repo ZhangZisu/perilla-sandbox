@@ -2,16 +2,18 @@
   "dependencies": {
     "fs-extra": "^7.0.1",
     "path": "^0.12.7",
+    "tmp": "^0.0.33",
     "typescript": "^3.1.6"
   },
   "name": "perilla-sandbox",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": "git@github.com:ZhangZisu/perilla-sandbox.git",
   "author": "ZhangZisu <admin@zhangzisu.cn>",
   "license": "MIT",
   "devDependencies": {
     "@types/fs-extra": "^5.0.4",
-    "@types/node": "^10.12.9"
+    "@types/node": "^10.12.9",
+    "@types/tmp": "^0.0.33"
   }
 }

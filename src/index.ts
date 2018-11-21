@@ -1,6 +1,7 @@
 import { spawnSync, SpawnSyncOptions } from "child_process";
 import { closeSync, copySync, ensureDirSync, openSync, removeSync, unlinkSync } from "fs-extra";
 import { join } from "path";
+import { dirSync, SynchrounousResult } from "tmp";
 import { IRunConfig, IRunResult, IsolateRawRunOptions, RunStatus } from "./interface";
 import { convertJsNameToIsolate, parseMetaFile } from "./utils";
 
@@ -11,7 +12,7 @@ export class PerillaSandbox {
     private wallMultiplier: number;
     private extraDelta: number;
     private extraMultiplier: number;
-    private tmpDir: string;
+    private tmp: SynchrounousResult;
     private isolatePath: string;
     private metaPath: string;
     private env: string[];
@@ -136,7 +137,7 @@ export class PerillaSandbox {
         spawnSync(this.isolateExecutable, args, config);
         try {
             if (this.metaPath) { unlinkSync(this.metaPath); }
-            if (this.tmpDir) { removeSync(this.tmpDir); }
+            if (this.tmp) { this.tmp.removeCallback(); }
         } catch (e) {
             // Eat any error
         }
@@ -156,8 +157,8 @@ export class PerillaSandbox {
         if (result.status >= 2) {
             throw new Error("Isolate exited with code " + result.status);
         }
-        ensureDirSync(this.tmpDir = join(__dirname, "..", "tmp", "" + this.boxID));
+        this.tmp = dirSync();
         this.isolatePath = result.stdout.toString().trim();
-        this.metaPath = join(this.tmpDir, "meta");
+        this.metaPath = join(this.tmp.name, "meta");
     }
 }
