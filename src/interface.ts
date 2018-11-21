@@ -37,3 +37,17 @@ export interface IsolateRunConfig {
     stdin?: string;
     stdout?: string;
 }
+
+export enum RunStatus {
+    Succeeded,
+    Failed,
+    TimeLimitExceeded,
+    MemortLimitExceeded,
+    RuntimeError,
+}
+
+export interface IRunResult {
+    memory: number;
+    time: number;
+    status: RunStatus;
+}

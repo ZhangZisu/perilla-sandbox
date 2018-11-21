@@ -39,11 +39,12 @@ export const generateArguments = (options: IsolateRawRunOptions, dirs: string[],
     return args;
 };
 
-export const parseMetaFile = (path: string) => {
+export const parseMetaFile = (path: string): any => {
     const content = readFileSync(path).toString();
     const tags = content.split("\n").map((x) => x.trim().split(":"));
-    const result = {};
+    const result: any = {};
     for (const kv of tags) {
         result[kv[0]] = kv[1];
     }
+    return result;
 };
