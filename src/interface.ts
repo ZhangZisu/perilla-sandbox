@@ -25,13 +25,19 @@ export interface IsolateRawRunOptions {
     [key: string]: string | number | boolean;
 }
 
-export interface IsolateRunConfig {
+export interface IExchangeFile{
+    src:string;
+    dst:string;
+}
+
+export interface IRunConfig {
     memory: number;
     time: number;
-    boxID: number;
     processes: number;
     shareNet: boolean;
-    working: string;
+    mountEtc: boolean;
+    inputFiles: IExchangeFile[];
+    outputFiles: IExchangeFile[];
     executable: string;
     arguments?: string[];
     stdin?: string;
@@ -50,4 +56,5 @@ export interface IRunResult {
     memory: number;
     time: number;
     status: RunStatus;
+    message?: string;
 }

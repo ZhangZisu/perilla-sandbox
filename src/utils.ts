@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
-import { IsolateRawRunOptions, IsolateRunConfig } from "./interface";
+import { IsolateRawRunOptions, IRunConfig } from "./interface";
 
-export const convertName = (name: string) => {
+export const convertJsNameToIsolate = (name: string) => {
     let ret = "--";
     for (const c of name) {
         if (c === c.toUpperCase()) {
@@ -13,38 +13,22 @@ export const convertName = (name: string) => {
     return ret;
 };
 
-export const generateArguments = (options: IsolateRawRunOptions, dirs: string[], envs: string[], program: string, programArguments?: string[]) => {
-    const args = [];
-    for (const key in options) {
-        if (typeof options[key] === "boolean") {
-            if (options[key]) { args.push(convertName(key)); }
-        } else {
-            args.push(convertName(key) + "=" + options[key]);
-        }
+export const convertIsolateNameToJs = (name: string) => {
+    let splitted = name.split('-');
+    let ret = splitted[0];
+    for (let i = 1; i < splitted.length; i++) {
+        ret += splitted[i][0].toUpperCase() + splitted[i].substr(1);
     }
-    for (const dir of dirs) {
-        args.push("--dir=" + dir);
-    }
-    for (const env of envs) {
-        args.push("--env=" + env);
-    }
-    args.push("--run");
-    args.push(program);
-    if (programArguments) {
-        args.push("--");
-        for (const arg of programArguments) {
-            args.push(arg);
-        }
-    }
-    return args;
-};
+    return ret;
+}
 
 export const parseMetaFile = (path: string): any => {
     const content = readFileSync(path).toString();
     const tags = content.split("\n").map((x) => x.trim().split(":"));
     const result: any = {};
     for (const kv of tags) {
-        result[kv[0]] = kv[1];
+        const key = convertIsolateNameToJs(kv[0]);
+        if (key && key.length) result[key] = kv[1];
     }
     return result;
 };
