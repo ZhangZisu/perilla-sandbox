@@ -18,6 +18,6 @@
     "@types/tmp": "^0.0.33"
   },
   "scripts": {
-    "postpublish": "tsc"
+    "prepublish": "tsc"
   }
 }
