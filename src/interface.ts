@@ -35,7 +35,6 @@ export interface IRunConfig {
     time: number;
     processes: number;
     shareNet: boolean;
-    mountEtc: boolean;
     inputFiles: IExchangeFile[];
     outputFiles: IExchangeFile[];
     executable: string;
