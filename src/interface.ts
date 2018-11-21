@@ -25,9 +25,9 @@ export interface IsolateRawRunOptions {
     [key: string]: string | number | boolean;
 }
 
-export interface IExchangeFile{
-    src:string;
-    dst:string;
+export interface IExchangeFile {
+    src: string;
+    dst: string;
 }
 
 export interface IRunConfig {

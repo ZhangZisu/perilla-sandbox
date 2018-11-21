@@ -1,7 +1,5 @@
 {
   "dependencies": {
-    "@types/fs-extra": "^5.0.4",
-    "@types/node": "^10.12.9",
     "fs-extra": "^7.0.1",
     "path": "^0.12.7",
     "typescript": "^3.1.6"
@@ -12,5 +10,8 @@
   "repository": "git@github.com:ZhangZisu/perilla-sandbox.git",
   "author": "ZhangZisu <admin@zhangzisu.cn>",
   "license": "MIT",
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/fs-extra": "^5.0.4",
+    "@types/node": "^10.12.9"
+  }
 }

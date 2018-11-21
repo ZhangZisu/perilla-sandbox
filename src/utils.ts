@@ -1,5 +1,5 @@
 import { readFileSync } from "fs";
-import { IsolateRawRunOptions, IRunConfig } from "./interface";
+import { IRunConfig, IsolateRawRunOptions } from "./interface";
 
 export const convertJsNameToIsolate = (name: string) => {
     let ret = "--";
@@ -14,13 +14,13 @@ export const convertJsNameToIsolate = (name: string) => {
 };
 
 export const convertIsolateNameToJs = (name: string) => {
-    let splitted = name.split('-');
+    const splitted = name.split("-");
     let ret = splitted[0];
     for (let i = 1; i < splitted.length; i++) {
         ret += splitted[i][0].toUpperCase() + splitted[i].substr(1);
     }
     return ret;
-}
+};
 
 export const parseMetaFile = (path: string): any => {
     const content = readFileSync(path).toString();
@@ -28,7 +28,7 @@ export const parseMetaFile = (path: string): any => {
     const result: any = {};
     for (const kv of tags) {
         const key = convertIsolateNameToJs(kv[0]);
-        if (key && key.length) result[key] = kv[1];
+        if (key && key.length) { result[key] = kv[1]; }
     }
     return result;
 };
