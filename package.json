@@ -6,7 +6,7 @@
     "typescript": "^3.1.6"
   },
   "name": "perilla-sandbox",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "dist/index.js",
   "typings": "dist/index",
   "repository": "git@github.com:ZhangZisu/perilla-sandbox.git",
