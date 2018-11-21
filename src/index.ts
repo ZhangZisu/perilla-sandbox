@@ -106,7 +106,7 @@ export class PerillaSandbox {
             if (parsed.exitcode === "0") {
                 status = RunStatus.Succeeded;
             } else if (parsed.cgOomKilled) {
-                status = RunStatus.MemortLimitExceeded;
+                status = RunStatus.MemoryLimitExceeded;
             } else if (parsed.killed) {
                 status = RunStatus.TimeLimitExceeded;
             }

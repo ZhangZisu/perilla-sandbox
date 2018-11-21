@@ -47,7 +47,7 @@ export enum RunStatus {
     Succeeded,
     Failed,
     TimeLimitExceeded,
-    MemortLimitExceeded,
+    MemoryLimitExceeded,
     RuntimeError,
 }
 
