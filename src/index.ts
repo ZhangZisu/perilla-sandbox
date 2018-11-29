@@ -16,7 +16,17 @@ export class PerillaSandbox {
     private isolatePath: string;
     private metaPath: string;
     private env: string[];
-    public constructor(isolateExecutable: string = "/usr/local/bin/isolate", boxID: number = 0, wallDelta: number = 0, wallMultiplier: number = 1, extraDelta: number = 0, extraMultiplier: number = 1, env: string[] = ["PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"]) {
+    private dir: string[];
+    public constructor(
+        isolateExecutable: string = "/usr/local/bin/isolate",
+        boxID: number = 0,
+        wallDelta: number = 0,
+        wallMultiplier: number = 1,
+        extraDelta: number = 0,
+        extraMultiplier: number = 1,
+        env: string[] = ["PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"],
+        dir: string[] = ["/etc=/etc"]
+    ) {
         this.isolateExecutable = isolateExecutable;
         this.boxID = boxID;
         this.wallDelta = wallDelta;
@@ -24,6 +34,7 @@ export class PerillaSandbox {
         this.extraDelta = extraDelta;
         this.extraMultiplier = extraMultiplier;
         this.env = env;
+        this.dir = dir;
     }
     public run(config: IRunConfig): IRunResult {
         try {
@@ -59,9 +70,11 @@ export class PerillaSandbox {
                 }
             }
             for (const env of this.env) {
-                args.push("--env=" + env);
+                args.push("--env=\"" + env + "\"");
             }
-            args.push("--dir=/etc=/etc");
+            for (const dir of this.dir) {
+                args.push("--dir=\"" + dir + "\"");
+            }
             args.push("--run");
             args.push(config.executable);
             if (config.arguments) {
