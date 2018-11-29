@@ -2,7 +2,7 @@ import { spawnSync, SpawnSyncOptions } from "child_process";
 import { closeSync, copySync, ensureDirSync, openSync, removeSync, unlinkSync } from "fs-extra";
 import { join } from "path";
 import { dirSync, SynchrounousResult } from "tmp";
-import { IRunConfig, IRunResult, IsolateRawRunOptions, RunStatus } from "./interface";
+import { IRunConfig, IRunResult, IsolateRawRunOptions, RunStatus, IOptionPair } from "./interface";
 import { convertJsNameToIsolate, parseMetaFile } from "./utils";
 
 export class PerillaSandbox {
@@ -15,8 +15,8 @@ export class PerillaSandbox {
     private tmp: SynchrounousResult;
     private isolatePath: string;
     private metaPath: string;
-    private env: string[];
-    private dir: string[];
+    private env: IOptionPair;
+    private dir: IOptionPair;
     public constructor(
         isolateExecutable: string = "/usr/local/bin/isolate",
         boxID: number = 0,
@@ -24,8 +24,8 @@ export class PerillaSandbox {
         wallMultiplier: number = 1,
         extraDelta: number = 0,
         extraMultiplier: number = 1,
-        env: string[] = ["PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"],
-        dir: string[] = ["/etc=/etc"]
+        env: IOptionPair = { "PATH": "/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin" },
+        dir: IOptionPair = { "/etc": "/etc" },
     ) {
         this.isolateExecutable = isolateExecutable;
         this.boxID = boxID;
@@ -67,11 +67,11 @@ export class PerillaSandbox {
                     args.push(convertJsNameToIsolate(key) + "=" + options[key]);
                 }
             }
-            for (const env of this.env) {
-                args.push("--env=\"" + env + "\"");
+            for (const key in this.env) {
+                args.push(`--env=${key}=${this.env[key]}`);
             }
-            for (const dir of this.dir) {
-                args.push("--dir=\"" + dir + "\"");
+            for (const key in this.dir) {
+                args.push(`--dir=${key}=${this.dir[key]}`);
             }
             args.push("--run");
             args.push(config.executable);

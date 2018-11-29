@@ -57,3 +57,7 @@ export interface IRunResult {
     status: RunStatus;
     message?: string;
 }
+
+export interface IOptionPair {
+    [key: string]: string;
+}

@@ -7,7 +7,7 @@ const tmp_1 = require("tmp");
 const interface_1 = require("./interface");
 const utils_1 = require("./utils");
 class PerillaSandbox {
-    constructor(isolateExecutable = "/usr/local/bin/isolate", boxID = 0, wallDelta = 0, wallMultiplier = 1, extraDelta = 0, extraMultiplier = 1, env = ["PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"], dir = ["/etc=/etc"]) {
+    constructor(isolateExecutable = "/usr/local/bin/isolate", boxID = 0, wallDelta = 0, wallMultiplier = 1, extraDelta = 0, extraMultiplier = 1, env = { "PATH": "/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin" }, dir = { "/etc": "/etc" }) {
         this.isolateExecutable = isolateExecutable;
         this.boxID = boxID;
         this.wallDelta = wallDelta;
@@ -51,11 +51,11 @@ class PerillaSandbox {
                     args.push(utils_1.convertJsNameToIsolate(key) + "=" + options[key]);
                 }
             }
-            for (const env of this.env) {
-                args.push("--env=\"" + env + "\"");
+            for (const key in this.env) {
+                args.push(`--env=${key}=${this.env[key]}`);
             }
-            for (const dir of this.dir) {
-                args.push("--dir=\"" + dir + "\"");
+            for (const key in this.dir) {
+                args.push(`--dir=${key}=${this.dir[key]}`);
             }
             args.push("--run");
             args.push(config.executable);
