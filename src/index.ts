@@ -2,7 +2,7 @@ import { spawnSync, SpawnSyncOptions } from "child_process";
 import { closeSync, copySync, ensureDirSync, openSync, removeSync, unlinkSync } from "fs-extra";
 import { join } from "path";
 import { dirSync, SynchrounousResult } from "tmp";
-import { IRunConfig, IRunResult, IsolateRawRunOptions, RunStatus, IOptionPair } from "./interface";
+import { IOptionPair, IRunConfig, IRunResult, IsolateRawRunOptions, RunStatus } from "./interface";
 import { convertJsNameToIsolate, parseMetaFile } from "./utils";
 
 export class PerillaSandbox {
@@ -24,7 +24,7 @@ export class PerillaSandbox {
         wallMultiplier: number = 1,
         extraDelta: number = 0,
         extraMultiplier: number = 1,
-        env: IOptionPair = { "PATH": "/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin" },
+        env: IOptionPair = { PATH: "/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin" },
         dir: IOptionPair = { "/etc": "/etc" },
     ) {
         this.isolateExecutable = isolateExecutable;
@@ -67,9 +67,11 @@ export class PerillaSandbox {
                     args.push(convertJsNameToIsolate(key) + "=" + options[key]);
                 }
             }
+            // tslint:disable-next-line:forin
             for (const key in this.env) {
                 args.push(`--env=${key}=${this.env[key]}`);
             }
+            // tslint:disable-next-line:forin
             for (const key in this.dir) {
                 args.push(`--dir=${key}=${this.dir[key]}`);
             }
@@ -112,29 +114,21 @@ export class PerillaSandbox {
                 }
             }
             const parsed = parseMetaFile(this.metaPath);
+            const time = parseFloat(parsed.time);
+            const memory = parseInt(parsed.cgMem, 10);
             this.cleanup();
             let status = RunStatus.RuntimeError;
             if (parsed.exitcode === "0") {
                 status = RunStatus.Succeeded;
-            } else if (parsed.cgOomKilled) {
+            } else if (parsed.cgOomKilled || memory > config.memory) {
                 status = RunStatus.MemoryLimitExceeded;
-            } else if (parsed.killed) {
+            } else if (parsed.killed || time > config.time) {
                 status = RunStatus.TimeLimitExceeded;
             }
-            return {
-                status,
-                time: parseFloat(parsed.time),
-                memory: parseInt(parsed.cgMem, 10),
-                message: parsed.message,
-            };
+            return { status, time, memory, message: parsed.message };
         } catch (e) {
             this.cleanup();
-            return {
-                status: RunStatus.Failed,
-                time: 0,
-                memory: 0,
-                message: e.message,
-            };
+            return { status: RunStatus.Failed, time: 0, memory: 0, message: e.message };
         }
     }
     private cleanup() {
